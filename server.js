@@ -1,25 +1,11 @@
-const ethers = require("ethers");
-const usdtABI = require("./ABIS/usdt.json");
-require("dotenv").config();
+import { Network, Alchemy } from 'alchemy-sdk';
 
-async function main() {
-	const usdtAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
-	const provider = new ethers.WebSocketProvider(
-		`wss://eth-mainnet.alchemyapi.io/v2/${process.env.ACHEMY_APIKEY}`
-	);
+const settings = {
+    apiKey: "BKAYgjZeg8ceZU6I7Q__h4chv_E8vjVJ",
+    network: Network.ETH_MAINNET,
+};
 
-	const contract = new ethers.Contract(usdtAddress, usdtABI, provider);
+const alchemy = new Alchemy(settings);
 
-	contract.on("Transfer", (from, to, value, event) => {
-		let info = {
-			from: from, 
-			to: to,
-			value: ethers.utils.formatUnits(value, 6),
-			data: event
-		}
-
-		console.log(JSON.stringify(info, null, 4));
-	});
-}
-
-main();
+// get the latest block
+const latestBlock = alchemy.core.getBlock("latest").then(console.log);
