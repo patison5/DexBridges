@@ -1,11 +1,24 @@
-import { Network, Alchemy } from 'alchemy-sdk';
+var express = require('express')
+const routes = require('./routes');
 
-const settings = {
-    apiKey: "BKAYgjZeg8ceZU6I7Q__h4chv_E8vjVJ",
-    network: Network.ETH_MAINNET,
-};
+require("dotenv").config();
 
-const alchemy = new Alchemy(settings);
+const app = express();
+const PORT = process.env.PORT || 8080;
+const URLAddress = `http://${process.env.HOST}:${PORT}`
 
-// get the latest block
-const latestBlock = alchemy.core.getBlock("latest").then(console.log);
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+app.use('/api/v1', routes.SyncSwapRouter)
+
+app.get('*', (request, response) => {
+    response.json({
+        status: 404,
+        message: "Page it not exist."
+    })
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`API app started working on ${URLAddress}`)
+})
